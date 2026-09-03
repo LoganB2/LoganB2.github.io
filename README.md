@@ -11,7 +11,7 @@ about.html                 About/Skills page
 contact.html                Contact page
 projects/*.html             Individual case study pages
 css/style.css                Shared styles
-js/main.js                   Nav highlighting + sparkline rendering
+js/main.js                   Nav highlighting
 ```
 
 ## Local preview
@@ -50,12 +50,3 @@ Then open `http://localhost:4173` in a browser.
 
 4. Wait ~1 minute, then visit the published URL. Every subsequent `git push`
    to `main` redeploys automatically.
-
-## Content notes
-
-Case study content is adapted from personal project notes, with employer
-name, client/vendor names, internal tool/codenames, and exact confidential
-figures (dollar amounts, row counts, dashboard counts) generalized or
-removed. See the sanitization summary shared during the initial build for
-what was changed — review against any applicable separation/confidentiality
-agreement before publishing further edits.
