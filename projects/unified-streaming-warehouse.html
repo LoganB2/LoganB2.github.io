@@ -24,9 +24,8 @@
       <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / Unified Streaming Data Warehouse</p>
       <h1>Unified Streaming Data Warehouse</h1>
       <p class="subtitle">
-        Collapsed 20+ per-client streaming model outputs into one standardized, self-discovering
-        table so every downstream report reads from a single source of truth instead of stitching
-        together dozens of inconsistent ones.
+        Turned dozens of separate, inconsistent client tables into one standardized table
+        that everything else reads from.
       </p>
       <div class="meta-row">
         <span class="tag">Databricks</span>
@@ -41,61 +40,34 @@
         <div class="case-section">
           <h2><span class="num">01</span> Problem</h2>
           <p>
-            Each client's streaming ad-performance model wrote its output to its own table,
-            with its own column layout, metric definitions, and quirks. More than twenty of
-            these tables existed, and every downstream report — dashboards, summaries,
-            audits — had to hand-write logic to read from whichever subset of clients it
-            covered. Adding a client meant touching every consumer separately, and there
-            was no single place to answer a cross-client question.
+            Every client's streaming data lived in its own table with its own quirks, so
+            any report that needed more than one client meant writing custom code just for
+            that report. There was no single place to go for a cross-client answer.
           </p>
         </div>
 
         <div class="case-section">
-          <h2><span class="num">02</span> Approach</h2>
-          <ul>
-            <li>Built auto-discovery logic that finds each client's model output table by
-              naming convention, with a small hand-maintained override list for the rare
-              client whose data lives somewhere non-standard.</li>
-            <li>Gated every client on having a minimum amount of trailing data before being
-              included, so partial or newly onboarded clients don't corrupt cross-client
-              aggregates.</li>
-            <li>Designed a shared schema — a fixed set of common dimensions plus a small
-              number of flexible, named metric slots — that every client's table gets
-              projected onto, since metric definitions vary client to client.</li>
-            <li>Unioned every client onto that schema into one large table, partitioned by
-              broadcast week for query performance, refreshed twice daily inside Databricks.</li>
-          </ul>
-        </div>
-
-        <div class="case-section">
-          <h2><span class="num">03</span> Technical Highlights</h2>
-          <ul>
-            <li><strong>Schema harmonization via flexible slots</strong> — rather than
-              forcing every client's metrics into identical named columns (which would
-              break as soon as a client's model changed), the schema exposes a handful of
-              generically named metric slots whose meaning is documented per client. This
-              let heterogeneous models coexist in one table without constant migrations.</li>
-            <li><strong>Auto-discovery over hardcoding</strong> — new clients are picked up
-              automatically as soon as their model table exists and clears the data-sufficiency
-              gate, cutting onboarding from a manual integration step to a no-op in the
-              common case.</li>
-            <li><strong>Caught a write-path footgun before it shipped</strong> — the table's
-              existing "incremental write" flag looked safe to enable for performance, but
-              tracing the write path showed flipping it as-is would silently wipe historical
-              data instead of appending to it. Flagged and left disabled pending a real
-              incremental-write redesign, rather than risk history loss for a performance
-              win.</li>
-          </ul>
+          <h2><span class="num">02</span> Technical Highlights</h2>
+          <p>
+            I built a job that automatically finds each client's model table and folds it
+            into one shared schema, using a few flexible metric slots since not every
+            client tracks the same things the same way. New clients only get pulled in
+            once they have enough history to be reliable, and the whole thing refreshes
+            twice a day in Databricks. While tracing through the write logic I also caught
+            a setting that looked like a safe way to speed things up, but would have
+            actually wiped out historical data if I'd flipped it, so I left it off and
+            flagged it for a proper fix later.
+          </p>
         </div>
 
         <div class="case-section outcome-box">
-          <h2><span class="num">04</span> Outcome</h2>
+          <h2><span class="num">03</span> Outcome</h2>
           <p>
-            One table — billions of rows across dozens of advertisers — now serves as the
-            single source of truth for cross-client streaming reporting, replacing what had
-            been a per-client patchwork. New clients onboard automatically instead of
-            requiring a manual integration pass, and a silent data-loss bug was caught and
-            headed off before it ever ran in production.
+            Reports that used to mean stitching together data from dozens of clients now
+            just query one table. New clients get folded in automatically instead of
+            needing a manual setup step every time someone onboards. And catching that
+            data-wiping bug before it ever ran in production saved a real headache down
+            the line.
           </p>
         </div>
       </div>

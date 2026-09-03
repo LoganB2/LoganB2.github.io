@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-Narrated, Fact-Audited Reporting Engine — Logan Barger</title>
+  <title>Dashboard Cleanup & Legacy Pipeline Translator — Logan Barger</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
@@ -21,17 +21,17 @@
 
   <main>
     <section class="case-hero container">
-      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / AI-Narrated, Fact-Audited Reporting Engine</p>
-      <h1>AI-Narrated, Fact-Audited Reporting Engine</h1>
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / Dashboard Cleanup &amp; Legacy Pipeline Translator</p>
+      <h1>Dashboard Cleanup &amp; Legacy Pipeline Translator</h1>
       <p class="subtitle">
-        One reporting engine that writes client-ready narratives, but only lets the AI cite
-        facts we already verified.
+        Two backend tools: one that automatically flags stale BI assets for cleanup, and
+        one that turns old dataflow logic into ready-to-run code.
       </p>
       <div class="meta-row">
-        <span class="tag">LLM Integration</span>
         <span class="tag">Python</span>
         <span class="tag">Databricks</span>
-        <span class="tag">Report Automation</span>
+        <span class="tag">LLM Integration</span>
+        <span class="tag">Automation</span>
       </div>
     </section>
 
@@ -40,34 +40,35 @@
         <div class="case-section">
           <h2><span class="num">01</span> Problem</h2>
           <p>
-            Client reporting was spread across several separate report builders, each with
-            its own formatting and manually written narrative, which was slow to produce
-            and easy to get subtly wrong.
+            Dashboards and dataflows piled up faster than anyone could keep track of, and
+            nobody had a good way to know what was actually still in use. Separately,
+            translating old dataflow logic into new pipeline code by hand was slow and
+            repetitive.
           </p>
         </div>
 
         <div class="case-section">
           <h2><span class="num">02</span> Technical Highlights</h2>
           <p>
-            I helped build one pipeline that generates every report type from a shared
-            codebase instead of four separate ones. Every report starts as a "fact packet"
-            computed straight from the data, no AI involved, and only then does an LLM
-            write the narrative on top, restricted to citing facts that are actually in
-            that packet. Every generated claim gets automatically re-checked against the
-            packet afterward as a hallucination check, and everything gets combined into
-            one interactive report with charts, competitive context, and milestones for a
-            client's full campaign lineup.
+            I built a monthly cleanup tool that pulls in all of a BI platform's metadata,
+            compares snapshots over time to catch what's been deleted and by whom, and
+            flags stale or oversized assets nobody's touched. Each owner gets a monthly
+            email listing exactly what's flagged for them, plus a weekly summary tracking
+            how much actually gets cleaned up. On the translation side, I built a tool
+            that takes an old dataflow, sends its logic to an LLM using a couple of
+            markdown files as the instructions, and outputs a ready-to-run notebook in the
+            new format, with a syntax check built in so bad output gets flagged instead of
+            silently saved.
           </p>
         </div>
 
         <div class="case-section outcome-box">
           <h2><span class="num">03</span> Outcome</h2>
           <p>
-            All the report types have been migrated over from their old builders and
-            checked against prior outputs, including combined multi-campaign reports. It's
-            in final validation on live data ahead of a full production swap, and a
-            next-generation viewer for these reports has already been packaged and handed
-            off for deployment.
+            The cleanup tool runs on its own schedule today and has been steadily nudging
+            owners to clear out unused assets for months. The translation tool works end
+            to end and turns what used to be a manual rebuild into pasting in an ID and
+            hitting run, with every translation logged for review.
           </p>
         </div>
       </div>
@@ -77,20 +78,20 @@
           <h4>Stack</h4>
           <div class="tags">
             <span class="tag">Python</span>
-            <span class="tag">LLM Integration</span>
             <span class="tag">Databricks</span>
-            <span class="tag">HTML/Email</span>
+            <span class="tag">LLM Integration</span>
+            <span class="tag">SQL</span>
           </div>
         </div>
         <div class="sidebar-block">
           <h4>Status</h4>
-          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Feature-complete, in final validation.</p>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Cleanup tool live; translator working end to end.</p>
         </div>
         <div class="sidebar-block">
           <h4>More projects</h4>
           <ul class="sidebar-nav">
-            <li><a href="campaign-data-chatbot.html">Campaign Data Chatbot</a></li>
             <li><a href="tv-attribution-fusion.html">TV Attribution Fusion</a></li>
+            <li><a href="streaming-postlogs-pipeline.html">Streaming Postlogs Pipeline</a></li>
             <li><a href="../index.html#projects">View all →</a></li>
           </ul>
         </div>
