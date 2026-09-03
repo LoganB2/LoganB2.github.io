@@ -4,17 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About — Logan Barger</title>
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container nav">
       <a class="nav-brand" href="index.html">Logan Barger</a>
-      <ul class="nav-links">
+      <div class="nav-right">
+        <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+      </div>
     </div>
   </header>
 
