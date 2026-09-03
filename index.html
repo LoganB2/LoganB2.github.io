@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Logan Barger — Applied AI Engineer</title>
-  <meta name="description" content="Portfolio of applied AI and data engineering projects by Logan Barger." />
+  <title>Logan Barger — Data Scientist</title>
+  <meta name="description" content="Portfolio of data science, data engineering, and applied AI projects by Logan Barger." />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -22,12 +22,13 @@
 
   <main>
     <section class="hero container">
-      <p class="hero-eyebrow">Applied AI Engineer</p>
+      <p class="hero-eyebrow">Data Scientist</p>
       <h1>I build data pipelines and LLM-powered tools that turn messy, high-volume data into decisions people trust.</h1>
       <p class="lead">
-        I work across data engineering, applied ML, and LLM integration, building systems
-        that hold up under scrutiny instead of just looking good in a demo. A few of the
-        projects I've built are below.
+        My background is in data science, and I most recently worked as an Applied AI
+        Engineer, building systems across data engineering, applied ML, and LLM
+        integration that hold up under scrutiny instead of just looking good in a demo.
+        A few of the projects I've built are below.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#projects">View Projects</a>
@@ -45,35 +46,18 @@
 
         <article class="card">
           <div class="card-top">
-            <span class="card-status status-live">Live</span>
+            <span class="card-status">In Validation</span>
           </div>
-          <h3><a href="projects/unified-streaming-warehouse.html">Unified Streaming Data Warehouse</a></h3>
-          <p class="desc">Folded dozens of separate, per-client streaming tables into one standardized table that everything else reads from.</p>
+          <h3><a href="projects/tv-attribution-fusion.html">Multi-Sensor TV Attribution Fusion</a></h3>
+          <p class="desc">Combines four different ways of measuring TV's impact into one weekly estimate with a real confidence range.</p>
           <div class="tags">
-            <span class="tag">Databricks</span>
-            <span class="tag">PySpark</span>
-            <span class="tag">Delta Lake</span>
+            <span class="tag">Bayesian Stats</span>
+            <span class="tag">numpyro</span>
+            <span class="tag">Python</span>
           </div>
           <div class="card-footer">
-            <a href="projects/unified-streaming-warehouse.html">Read case study →</a>
-            <span class="metric">Billions of rows</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <span class="card-status status-live">Live</span>
-          </div>
-          <h3><a href="projects/streaming-postlogs-pipeline.html">Streaming Postlogs Pipeline</a></h3>
-          <p class="desc">A daily pipeline that standardizes multi-vendor streaming ad data and feeds dozens of live dashboards.</p>
-          <div class="tags">
-            <span class="tag">Databricks</span>
-            <span class="tag">PySpark</span>
-            <span class="tag">SQL</span>
-          </div>
-          <div class="card-footer">
-            <a href="projects/streaming-postlogs-pipeline.html">Read case study →</a>
-            <span class="metric">Runs daily</span>
+            <a href="projects/tv-attribution-fusion.html">Read case study →</a>
+            <span class="metric">4 fused sensors</span>
           </div>
         </article>
 
@@ -96,24 +80,7 @@
 
         <article class="card">
           <div class="card-top">
-            <span class="card-status">In Validation</span>
-          </div>
-          <h3><a href="projects/tv-attribution-fusion.html">Multi-Sensor TV Attribution Fusion</a></h3>
-          <p class="desc">Combines four different ways of measuring TV's impact into one weekly estimate with a real confidence range.</p>
-          <div class="tags">
-            <span class="tag">Bayesian Stats</span>
-            <span class="tag">numpyro</span>
-            <span class="tag">Python</span>
-          </div>
-          <div class="card-footer">
-            <a href="projects/tv-attribution-fusion.html">Read case study →</a>
-            <span class="metric">4 fused sensors</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <span class="card-status">In Validation</span>
+            <span class="card-status status-live">Live</span>
           </div>
           <h3><a href="projects/ai-narrated-reporting-engine.html">AI-Narrated, Fact-Audited Reporting Engine</a></h3>
           <p class="desc">One reporting engine that writes client-ready narratives, but only lets the AI cite facts we already verified.</p>
@@ -142,6 +109,40 @@
           <div class="card-footer">
             <a href="projects/dashboard-cleanup-translator.html">Read case study →</a>
             <span class="metric">2 tools, live &amp; working</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <span class="card-status status-live">Live</span>
+          </div>
+          <h3><a href="projects/streaming-postlogs-pipeline.html">Streaming Postlogs Pipeline</a></h3>
+          <p class="desc">A daily pipeline that standardizes multi-vendor streaming ad data and feeds dozens of live dashboards.</p>
+          <div class="tags">
+            <span class="tag">Databricks</span>
+            <span class="tag">PySpark</span>
+            <span class="tag">SQL</span>
+          </div>
+          <div class="card-footer">
+            <a href="projects/streaming-postlogs-pipeline.html">Read case study →</a>
+            <span class="metric">Runs daily</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <span class="card-status">In Progress</span>
+          </div>
+          <h3><a href="projects/vendor-data-evaluation.html">Third-Party Data Vendor Evaluation</a></h3>
+          <p class="desc">A LightGBM + SHAP pipeline built to answer one question: does this vendor's data actually predict anything?</p>
+          <div class="tags">
+            <span class="tag">LightGBM</span>
+            <span class="tag">SHAP</span>
+            <span class="tag">Data Science</span>
+          </div>
+          <div class="card-footer">
+            <a href="projects/vendor-data-evaluation.html">Read case study →</a>
+            <span class="metric">9-step pipeline</span>
           </div>
         </article>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-Narrated, Fact-Audited Reporting Engine — Logan Barger</title>
+  <title>Third-Party Data Vendor Evaluation — Logan Barger</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
@@ -21,17 +21,17 @@
 
   <main>
     <section class="case-hero container">
-      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / AI-Narrated, Fact-Audited Reporting Engine</p>
-      <h1>AI-Narrated, Fact-Audited Reporting Engine</h1>
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / Third-Party Data Vendor Evaluation</p>
+      <h1>Third-Party Data Vendor Evaluation</h1>
       <p class="subtitle">
-        One reporting engine that writes client-ready narratives, but only lets the AI cite
-        facts we already verified.
+        Built a LightGBM + SHAP pipeline to answer a real renewal question: does this
+        vendor's data actually predict anything, or are we paying for noise?
       </p>
       <div class="meta-row">
-        <span class="tag">LLM Integration</span>
         <span class="tag">Python</span>
-        <span class="tag">Databricks</span>
-        <span class="tag">Report Automation</span>
+        <span class="tag">LightGBM</span>
+        <span class="tag">SHAP</span>
+        <span class="tag">Data Science</span>
       </div>
     </section>
 
@@ -40,34 +40,34 @@
         <div class="case-section">
           <h2><span class="num">01</span> Problem</h2>
           <p>
-            Client reporting was spread across several separate report builders, each with
-            its own formatting and manually written narrative, which was slow to produce
-            and easy to get subtly wrong.
+            Before renewing a pricey third-party data subscription, leadership needed a
+            real answer: does this vendor's IP-enrichment data actually predict streaming
+            conversion, or are we paying for noise dressed up as signal?
           </p>
         </div>
 
         <div class="case-section">
           <h2><span class="num">02</span> Technical Highlights</h2>
           <p>
-            I helped build one pipeline that generates every report type from a shared
-            codebase instead of four separate ones. Every report starts as a "fact packet"
-            computed straight from the data, no AI involved, and only then does an LLM
-            write the narrative on top, restricted to citing facts that are actually in
-            that packet. Every generated claim gets automatically re-checked against the
-            packet afterward as a hallucination check, and everything gets combined into
-            one interactive report with charts, competitive context, and milestones for a
-            client's full campaign lineup.
+            I built a pipeline that joins the vendor's IP-level data to our streaming
+            campaign data, trims outliers, and runs it through two tests: a straightforward
+            statistical screen and a LightGBM model with SHAP to see whether the vendor's
+            features add real predictive lift over a campaign-only baseline. The real test
+            is out-of-fold AUC grouped by campaign, so the model can't just memorize which
+            campaign it's looking at and call that a win. I also scoped the data lookup down
+            to only the IPs that actually mattered, which cut what it cost to run the
+            analysis by a large margin.
           </p>
         </div>
 
         <div class="case-section outcome-box">
           <h2><span class="num">03</span> Outcome</h2>
           <p>
-            All the report types have been migrated over from their old builders and
-            checked against prior outputs, including combined multi-campaign reports. It's
-            now live and generating reports on a regular schedule, and a next-generation
-            viewer for these reports has already been packaged and handed off for
-            deployment.
+            The full pipeline is built and documented end to end, from the data joins
+            through a final recommendation memo, and ready to run against real data. It's
+            designed to give a clean yes-or-no answer instead of a vague "seems fine,"
+            which is exactly what a renewal decision needs. Results will feed directly into
+            the vendor's go or no-go call.
           </p>
         </div>
       </div>
@@ -77,19 +77,19 @@
           <h4>Stack</h4>
           <div class="tags">
             <span class="tag">Python</span>
-            <span class="tag">LLM Integration</span>
+            <span class="tag">LightGBM</span>
+            <span class="tag">SHAP</span>
             <span class="tag">Databricks</span>
-            <span class="tag">HTML/Email</span>
           </div>
         </div>
         <div class="sidebar-block">
           <h4>Status</h4>
-          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Live, running on a regular schedule.</p>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Pipeline built and documented, pending a full run on real data.</p>
         </div>
         <div class="sidebar-block">
           <h4>More projects</h4>
           <ul class="sidebar-nav">
-            <li><a href="campaign-data-chatbot.html">Campaign Data Chatbot</a></li>
+            <li><a href="streaming-postlogs-pipeline.html">Streaming Postlogs Pipeline</a></li>
             <li><a href="tv-attribution-fusion.html">TV Attribution Fusion</a></li>
             <li><a href="../index.html#projects">View all →</a></li>
           </ul>
