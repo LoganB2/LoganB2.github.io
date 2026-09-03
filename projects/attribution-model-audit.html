@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TV Attribution Model Audit & Rebuild — Logan Barger</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="nav-brand" href="../index.html">Logan Barger</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero container">
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / TV Attribution Model Audit &amp; Rebuild</p>
+      <h1>TV Attribution Model Audit &amp; Rebuild</h1>
+      <p class="subtitle">
+        Rebuilt and stress-tested a minute-level TV attribution model that credits web
+        traffic spikes to TV airings — to find out where that method is actually valid,
+        where it isn't, and what should replace it.
+      </p>
+      <div class="meta-row">
+        <span class="tag">Statistics</span>
+        <span class="tag">Machine Learning</span>
+        <span class="tag">Python</span>
+        <span class="tag">Causal Inference</span>
+      </div>
+    </section>
+
+    <div class="container case-body">
+      <div>
+        <div class="case-section">
+          <h2><span class="num">01</span> Problem</h2>
+          <p>
+            An existing minute-level TV attribution model credited website traffic spikes
+            to TV airings and reported those results with high confidence — but the method
+            has a known weakness: normal traffic noise can look exactly like a real
+            response if you're not careful. No one had rigorously tested how much of the
+            model's claimed impact was real signal versus noise that happened to line up
+            with an airing.
+          </p>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">02</span> Approach</h2>
+          <ul>
+            <li>Re-implemented the existing legacy model from scratch in a modern data
+              platform, verifying it matched the original bit-for-bit before changing
+              anything — so any later differences could be attributed to methodology, not
+              a reimplementation bug.</li>
+            <li>Built a signal-detection harness that tests each client for a real,
+              statistically detectable TV-to-web response using regression combined with
+              placebo tests run against fake, shuffled airing schedules — if a "response"
+              shows up even against a schedule that never aired, it's not real signal.</li>
+            <li>Built a per-client routing table that assigns each campaign to the
+              measurement method appropriate to its signal strength — minute-level
+              attribution, a lagged/panel-based method, or "insufficient data yet" — rather
+              than applying one method universally.</li>
+            <li>Built a second-generation model with a learned traffic baseline and an
+              explicit "honesty gate" that zeroes out any claimed impact that can't beat
+              its own placebo test, then ran a pre-registered head-to-head comparison
+              against the original model.</li>
+          </ul>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">03</span> Technical Highlights</h2>
+          <ul>
+            <li><strong>Placebo/fake-schedule testing as a validity check</strong> — the
+              core methodological move: if a model shows a "response" to an airing that
+              never happened, that tells you how much of its real-schedule result is
+              noise, not signal.</li>
+            <li><strong>Per-client signal routing</strong> — rather than assuming one
+              method fits every campaign, each client is tested individually and routed to
+              whichever measurement approach its own data can actually support.</li>
+            <li><strong>An explicit honesty gate</strong> — the rebuilt model is
+              structurally prevented from reporting an effect it can't distinguish from its
+              own placebo baseline, rather than relying on a human to catch overconfident
+              output after the fact.</li>
+            <li><strong>Pre-registered model face-off</strong> — old vs. new model
+              comparison criteria were fixed before results were seen, to keep the
+              evaluation honest.</li>
+          </ul>
+        </div>
+
+        <div class="case-section outcome-box">
+          <h2><span class="num">04</span> Outcome</h2>
+          <p>
+            The audit found that, for most tested clients, a large majority of the legacy
+            model's claimed impact was statistical artifact rather than a real response —
+            and quantified that minute-level attribution is only defensible for a modest
+            share of total spend, with the remainder better served by a lagged/panel-based
+            method. The rebuilt model outperformed the legacy one on every validation
+            metric. Findings were packaged into a leadership-facing deliverable and are
+            currently under review as the basis for a company-wide attribution methodology
+            change.
+          </p>
+        </div>
+      </div>
+
+      <aside class="case-sidebar">
+        <div class="sidebar-block">
+          <h4>Stack</h4>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">Databricks</span>
+            <span class="tag">Statistics</span>
+            <span class="tag">Regression / ML</span>
+          </div>
+        </div>
+        <div class="sidebar-block">
+          <h4>Status</h4>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Findings complete, under leadership review.</p>
+        </div>
+        <div class="sidebar-block">
+          <h4>More projects</h4>
+          <ul class="sidebar-nav">
+            <li><a href="tv-attribution-fusion.html">TV Attribution Fusion</a></li>
+            <li><a href="streaming-postlogs-pipeline.html">Streaming Postlogs Pipeline</a></li>
+            <li><a href="../index.html#projects">View all →</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Logan Barger</span>
+      <span><a href="../contact.html">logan.p.barger@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

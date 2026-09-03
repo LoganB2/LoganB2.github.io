@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming Postlogs Pipeline — Logan Barger</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="nav-brand" href="../index.html">Logan Barger</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero container">
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / Streaming Postlogs Pipeline</p>
+      <h1>Streaming Postlogs Pipeline</h1>
+      <p class="subtitle">
+        A daily pipeline that standardizes streaming (CTV/OTT) ad impression logs from
+        several vendors into a consistent format, feeding dozens of live dashboards —
+        and the fix for a partition bug that had been quietly corrupting monthly totals.
+      </p>
+      <div class="meta-row">
+        <span class="tag">Databricks</span>
+        <span class="tag">PySpark</span>
+        <span class="tag">SQL</span>
+        <span class="tag">Data Engineering</span>
+      </div>
+    </section>
+
+    <div class="container case-body">
+      <div>
+        <div class="case-section">
+          <h2><span class="num">01</span> Problem</h2>
+          <p>
+            Streaming ad impression data arrived from several different vendors, each with
+            its own log format, granularity, and quirks — some impression-level, some
+            pre-aggregated. Dashboards needed one consistent view across all of them. On
+            top of that, an existing bug meant that whenever the job's write logic ran at
+            the wrong time grain, it could silently overwrite a full month of totals with
+            partial data — and nothing would flag it as wrong.
+          </p>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">02</span> Approach</h2>
+          <ul>
+            <li>Built a daily standardization job that reads each vendor's feed — including
+              both raw impression-level logs and pre-aggregated vendor summaries — and
+              writes them into a common table structure.</li>
+            <li>Root-caused the partition bug: the write path replaced data at whatever time
+              grain the current read happened to use, so a weekly read could overwrite (and
+              effectively truncate) a monthly partition. Fixed the rule so reads always
+              match the grain of the partition being replaced.</li>
+            <li>Built household frequency logic that blends viewing-behavior factors for
+              linear-style vs. streaming inventory, weighted by each campaign's share of
+              streaming spend, to produce a more accurate frequency estimate than either
+              factor alone.</li>
+            <li>Kept downstream-facing column names stable on purpose, even where they're
+              unconventional, because dozens of live dashboards depend on exact column
+              names and a rename would break them silently.</li>
+          </ul>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">03</span> Technical Highlights</h2>
+          <ul>
+            <li><strong>Partition-grain discipline</strong> — traced a subtle bug back to a
+              mismatch between the grain of an incoming read and the grain of the partition
+              it was replacing, which had been silently freezing monthly totals at a
+              fraction of their true value. The fix was a small rule change, but finding it
+              required understanding the full write path, not just the symptom.</li>
+            <li><strong>Weighted frequency blending</strong> — rather than picking one
+              viewers-per-household factor for all inventory, blends a linear-style and an
+              OTT-style factor in proportion to each campaign's actual streaming mix.</li>
+            <li><strong>Backward-compatible schema decisions</strong> — chose to preserve
+              existing, imperfect column naming rather than "clean it up," because the
+              downstream BI layer resolves dashboard cards by exact column name and a
+              rename would have broken dozens of them with no warning.</li>
+          </ul>
+        </div>
+
+        <div class="case-section outcome-box">
+          <h2><span class="num">04</span> Outcome</h2>
+          <p>
+            The pipeline runs daily in production, feeding dozens of live dashboards with
+            standardized, cross-vendor streaming data. The partition-grain fix corrected a
+            data-quality issue that had been affecting monthly reporting, and the new
+            frequency logic gave a more accurate household-reach estimate across linear
+            and streaming inventory.
+          </p>
+        </div>
+      </div>
+
+      <aside class="case-sidebar">
+        <div class="sidebar-block">
+          <h4>Stack</h4>
+          <div class="tags">
+            <span class="tag">Databricks</span>
+            <span class="tag">PySpark</span>
+            <span class="tag">Delta Lake</span>
+            <span class="tag">SQL</span>
+          </div>
+        </div>
+        <div class="sidebar-block">
+          <h4>Status</h4>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Live in production, runs daily.</p>
+        </div>
+        <div class="sidebar-block">
+          <h4>More projects</h4>
+          <ul class="sidebar-nav">
+            <li><a href="unified-streaming-warehouse.html">Unified Streaming Data Warehouse</a></li>
+            <li><a href="attribution-model-audit.html">TV Attribution Model Audit</a></li>
+            <li><a href="../index.html#projects">View all →</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Logan Barger</span>
+      <span><a href="../contact.html">logan.p.barger@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

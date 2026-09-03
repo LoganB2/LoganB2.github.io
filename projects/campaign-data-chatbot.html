@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plain-English Campaign Data Chatbot — Logan Barger</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="nav-brand" href="../index.html">Logan Barger</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero container">
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / Plain-English Campaign Data Chatbot</p>
+      <h1>Plain-English Campaign Data Chatbot</h1>
+      <p class="subtitle">
+        An internal tool that lets non-technical staff ask plain-English questions about
+        ad campaign spend, impressions, and airings, and get back a trustworthy number,
+        table, or chart — backed by an automated benchmark to keep it honest.
+      </p>
+      <div class="meta-row">
+        <span class="tag">LLM Tool Use</span>
+        <span class="tag">Python</span>
+        <span class="tag">Streamlit</span>
+        <span class="tag">Evaluation</span>
+      </div>
+    </section>
+
+    <div class="container case-body">
+      <div>
+        <div class="case-section">
+          <h2><span class="num">01</span> Problem</h2>
+          <p>
+            Only people comfortable writing SQL could answer questions against the
+            company's linear TV and streaming ad datasets — even simple ones like "how
+            much did we spend on this campaign last week." Everyone else had to route the
+            question to an analyst. A natural-language interface needed to be accurate
+            enough to trust, safe enough to expose broadly, and honest about what it didn't
+            know.
+          </p>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">02</span> Approach</h2>
+          <ul>
+            <li>Built an LLM tool-use loop that writes SQL against the target datasets,
+              tests it, and self-repairs once on a failed query before giving up gracefully.</li>
+            <li>Encoded dataset knowledge — routing rules, scope boundaries, and known
+              traps like unit mismatches between datasets — directly into structured
+              dataset specs that serve as the system prompt, rather than relying on the
+              model to infer them.</li>
+            <li>Added guardrails: SELECT-only SQL, explicit decline behavior for
+              out-of-scope questions (like performance questions the data can't answer),
+              and full logging of every question asked.</li>
+            <li>Shipped a Streamlit UI on top and deployed it as an internal Databricks App
+              so it's available without any local setup.</li>
+            <li>Built a benchmark harness that generates roughly 2,000 test questions,
+              scores the bot's answers, and triages failures into "bot bug" vs. "test
+              itself was wrong" — then extracted it into a portable package so another
+              team could benchmark their own chatbot the same way.</li>
+          </ul>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">03</span> Technical Highlights</h2>
+          <ul>
+            <li><strong>Dataset specs as the system prompt</strong> — instead of hoping the
+              model infers dataset quirks from examples, the specs directly document
+              routing logic, scope limits, and unit traps (e.g., one dataset's counts being
+              in thousands while another's are 1:1), making the model's behavior easier to
+              reason about and fix.</li>
+            <li><strong>Self-repair with a hard stop</strong> — the bot gets exactly one
+              retry on a failed query before declining, balancing resilience against
+              runaway retries or silently wrong answers.</li>
+            <li><strong>Benchmark as a reusable package</strong> — the ~2,000-question
+              harness and failure-triage logic were pulled out of the project-specific code
+              into a standalone package specifically so a different team's chatbot could be
+              scored with the same methodology.</li>
+            <li><strong>Architecture tuned for cost vs. accuracy</strong> — model and
+              pipeline choices were made deliberately to balance response latency and API
+              cost against answer accuracy for a tool meant to run at broad internal scale.</li>
+          </ul>
+        </div>
+
+        <div class="case-section outcome-box">
+          <h2><span class="num">04</span> Outcome</h2>
+          <p>
+            Deployed and in active use internally, scoring in the mid-80s percent on the
+            full benchmark — materially higher once test cases with incorrect expected
+            answers are excluded. The benchmark package is now being reused to evaluate a
+            second, unrelated chatbot built by another team.
+          </p>
+        </div>
+      </div>
+
+      <aside class="case-sidebar">
+        <div class="sidebar-block">
+          <h4>Stack</h4>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">LLM Tool Use</span>
+            <span class="tag">Streamlit</span>
+            <span class="tag">Databricks Apps</span>
+          </div>
+        </div>
+        <div class="sidebar-block">
+          <h4>Status</h4>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Live, deployed internally.</p>
+        </div>
+        <div class="sidebar-block">
+          <h4>More projects</h4>
+          <ul class="sidebar-nav">
+            <li><a href="ai-narrated-reporting-engine.html">AI-Narrated Reporting Engine</a></li>
+            <li><a href="tv-attribution-fusion.html">TV Attribution Fusion</a></li>
+            <li><a href="../index.html#projects">View all →</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Logan Barger</span>
+      <span><a href="../contact.html">logan.p.barger@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

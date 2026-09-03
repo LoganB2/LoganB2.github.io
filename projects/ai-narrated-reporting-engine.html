@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Narrated, Fact-Audited Reporting Engine — Logan Barger</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="nav-brand" href="../index.html">Logan Barger</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero container">
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / AI-Narrated, Fact-Audited Reporting Engine</p>
+      <h1>AI-Narrated, Fact-Audited Reporting Engine</h1>
+      <p class="subtitle">
+        One reporting engine replacing four scattered, manually-maintained report builders —
+        every client report gets an AI-written narrative that's allowed to cite only
+        facts that have already been verified against the source data.
+      </p>
+      <div class="meta-row">
+        <span class="tag">LLM Integration</span>
+        <span class="tag">Python</span>
+        <span class="tag">Databricks</span>
+        <span class="tag">Report Automation</span>
+      </div>
+    </section>
+
+    <div class="container case-body">
+      <div>
+        <div class="case-section">
+          <h2><span class="num">01</span> Problem</h2>
+          <p>
+            Client reporting across TV and streaming campaigns — covering both media
+            delivery and performance — was spread across several separate, one-off report
+            builders, each with its own formatting and manually written narrative sections.
+            That meant duplicated logic, inconsistent client experience, and narrative text
+            that was slow to produce and easy to get subtly wrong.
+          </p>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">02</span> Approach</h2>
+          <ul>
+            <li>Built one parameterized pipeline that generates all four report
+              variants (linear/streaming crossed with delivery/performance) from a shared
+              codebase instead of four separate ones.</li>
+            <li>Every report starts as a deterministic "fact packet" — computed directly
+              from the data, with no AI involved — before any narrative is written.</li>
+            <li>An LLM then writes the narrative on top of that packet, constrained to cite
+              only facts that are actually present in it; every generated claim is
+              automatically re-audited against the packet afterward as a hallucination
+              check.</li>
+            <li>Combines a client's full campaign portfolio into one interactive HTML
+              report with tabs, charts, competitive context, milestones, and reach — plus
+              editable per-campaign summary snapshots for account teams.</li>
+            <li>Wired report delivery to route to the right internal teams automatically,
+              and archives every sent report so results feed a downstream viewer app.</li>
+          </ul>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">03</span> Technical Highlights</h2>
+          <ul>
+            <li><strong>Fact-packet / narrative separation as a guardrail</strong> — by
+              computing every number deterministically before the LLM ever sees the data,
+              and restricting it to only cite what's in that packet, the design turns
+              hallucination from an open-ended risk into something that can be mechanically
+              checked.</li>
+            <li><strong>Automated claim auditing</strong> — every narrative is re-checked
+              claim-by-claim against the source fact packet after generation, so drift or
+              subtle misstatement gets caught before a report ships, not after a client
+              notices.</li>
+            <li><strong>One pipeline, four report shapes</strong> — parameterizing the
+              linear/streaming × delivery/performance matrix into a single codebase
+              eliminated the divergence that came from maintaining four independently
+              evolving builders.</li>
+            <li><strong>Production safety discipline</strong> — the live scheduled version
+              of the pipeline syncs to a production job within seconds of any change, so
+              changes to it are made deliberately and only when intended to go live
+              immediately.</li>
+          </ul>
+        </div>
+
+        <div class="case-section outcome-box">
+          <h2><span class="num">04</span> Outcome</h2>
+          <p>
+            Feature-complete: all four report types have been migrated from their legacy
+            builders and validated against prior outputs, including combined multi-campaign
+            reports. The system is in final validation on live data ahead of a full
+            production swap, and a next-generation viewer app payload has already been
+            packaged and handed off for deployment.
+          </p>
+        </div>
+      </div>
+
+      <aside class="case-sidebar">
+        <div class="sidebar-block">
+          <h4>Stack</h4>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">LLM Integration</span>
+            <span class="tag">Databricks</span>
+            <span class="tag">HTML/Email</span>
+          </div>
+        </div>
+        <div class="sidebar-block">
+          <h4>Status</h4>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Feature-complete, in final validation.</p>
+        </div>
+        <div class="sidebar-block">
+          <h4>More projects</h4>
+          <ul class="sidebar-nav">
+            <li><a href="campaign-data-chatbot.html">Campaign Data Chatbot</a></li>
+            <li><a href="tv-attribution-fusion.html">TV Attribution Fusion</a></li>
+            <li><a href="../index.html#projects">View all →</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Logan Barger</span>
+      <span><a href="../contact.html">logan.p.barger@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

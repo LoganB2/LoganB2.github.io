@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Sensor TV Attribution Fusion — Logan Barger</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="nav-brand" href="../index.html">Logan Barger</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero container">
+      <p class="breadcrumb"><a href="../index.html#projects">Projects</a> / Multi-Sensor TV Attribution Fusion</p>
+      <h1>Multi-Sensor TV Attribution Fusion</h1>
+      <p class="subtitle">
+        A next-generation TV attribution system that fuses four independent measurement
+        methods into one weekly estimate of incremental impact — with real uncertainty
+        intervals instead of a single over-confident number.
+      </p>
+      <div class="meta-row">
+        <span class="tag">Bayesian Statistics</span>
+        <span class="tag">numpyro</span>
+        <span class="tag">Python</span>
+        <span class="tag">Causal Inference</span>
+      </div>
+    </section>
+
+    <div class="container case-body">
+      <div>
+        <div class="case-section">
+          <h2><span class="num">01</span> Problem</h2>
+          <p>
+            Standard TV attribution relies on a single measurement method, which produces a
+            single number with no signal for how much to trust it. Different methods have
+            different blind spots — a model can look confident while being systematically
+            wrong in a way its own methodology can't detect. Clients needed an estimate of
+            TV's incremental impact on sessions, orders, and revenue that was honest about
+            its own uncertainty.
+          </p>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">02</span> Approach</h2>
+          <ul>
+            <li>Designed four independent "sensors," each deliberately built on a different
+              methodology so they don't share the same failure mode: a minute-level
+              web-traffic-spike method, a TV-panel exposed-vs-matched-control comparison, a
+              household-level case-control method using viewing data, and a deterministic
+              scan-based matching method.</li>
+            <li>Built a Bayesian fusion layer (using numpyro) that combines the four
+              sensors' estimates into one weekly total with credible intervals, plus a
+              diagnostic gauge that distinguishes "the sensors disagree with each other"
+              from "every sensor is individually noisy."</li>
+            <li>Restricted outputs to raw incremental totals only — no cost-per-result
+              metrics — so downstream dashboards compute derived metrics from a single
+              consistent source rather than the model making assumptions about cost
+              allocation.</li>
+            <li>Built allocation breakdowns (by creative, daypart, and geography) and a
+              "false-attribution waterfall" that quantifies how much of the prior
+              production model's claimed impact is statistical artifact rather than real
+              lift.</li>
+          </ul>
+        </div>
+
+        <div class="case-section">
+          <h2><span class="num">03</span> Technical Highlights</h2>
+          <ul>
+            <li><strong>Deliberately uncorrelated sensor design</strong> — each of the four
+              measurement methods fails differently, so agreement between them is real
+              evidence, not four ways of making the same mistake.</li>
+            <li><strong>Bayesian fusion with honest intervals</strong> — rather than
+              averaging point estimates, the fusion layer propagates each sensor's own
+              uncertainty into the combined credible interval, and a companion gauge
+              explains what's driving a wide interval when one occurs.</li>
+            <li><strong>False-attribution waterfall</strong> — a specific analysis
+              decomposing how much of the existing production model's claimed impact
+              would still show up even with no real causal effect, making the case for
+              change legible to non-technical stakeholders.</li>
+            <li><strong>Modular pipeline architecture</strong> — each sensor lives in its
+              own small, single-purpose module with one orchestrator notebook tying them
+              together, so sensors can be validated, debugged, or swapped independently.</li>
+          </ul>
+        </div>
+
+        <div class="case-section outcome-box">
+          <h2><span class="num">04</span> Outcome</h2>
+          <p>
+            All four sensors were built and validated end-to-end on the first client, with
+            fusion producing a full set of weekly estimates and credible intervals across
+            the validation window. Allocation tables and the false-attribution waterfall
+            are complete. The system is now being extended from one validated client to
+            the rest of the client roster.
+          </p>
+        </div>
+      </div>
+
+      <aside class="case-sidebar">
+        <div class="sidebar-block">
+          <h4>Stack</h4>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">numpyro</span>
+            <span class="tag">Databricks</span>
+            <span class="tag">Delta Lake</span>
+          </div>
+        </div>
+        <div class="sidebar-block">
+          <h4>Status</h4>
+          <p style="margin:0; color: var(--text-muted); font-size: 0.9rem;">Validated on first client; scaling out.</p>
+        </div>
+        <div class="sidebar-block">
+          <h4>More projects</h4>
+          <ul class="sidebar-nav">
+            <li><a href="attribution-model-audit.html">TV Attribution Model Audit</a></li>
+            <li><a href="ai-narrated-reporting-engine.html">AI-Narrated Reporting Engine</a></li>
+            <li><a href="../index.html#projects">View all →</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Logan Barger</span>
+      <span><a href="../contact.html">logan.p.barger@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
