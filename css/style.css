@@ -62,7 +62,8 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 0;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .nav-brand {
@@ -97,7 +98,8 @@ a:hover { text-decoration: underline; }
 main { flex: 1; }
 
 .hero {
-  padding: 64px 0 40px;
+  padding-top: 64px;
+  padding-bottom: 40px;
 }
 
 .hero-eyebrow {
@@ -267,7 +269,8 @@ main { flex: 1; }
 
 /* Case study pages */
 .case-hero {
-  padding: 48px 0 24px;
+  padding-top: 48px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 36px;
 }
