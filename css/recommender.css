@@ -347,6 +347,56 @@
 }
 .rec-suggestions button:hover { background: var(--accent-soft); color: var(--accent-ink); }
 
+.rec-title-search {
+  margin-bottom: 16px;
+}
+
+.rec-title-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+}
+.rec-title-result:hover { background: var(--accent-soft); }
+.rec-title-result:disabled { cursor: default; opacity: 0.6; }
+.rec-title-result img {
+  width: 32px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  flex-shrink: 0;
+}
+.rec-title-result .rec-title-result-info {
+  flex: 1;
+  min-width: 0;
+}
+.rec-title-result .rec-title-result-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rec-title-result .rec-title-result-meta {
+  font-size: 0.76rem;
+  color: var(--text-faint);
+  margin: 0;
+}
+.rec-title-result .rec-title-result-action {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 .rec-madeby-chip {
   display: inline-flex;
   align-items: center;

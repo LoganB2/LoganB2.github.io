@@ -133,6 +133,12 @@
         <div class="rec-panel">
           <h3>Watchlist</h3>
           <p class="rec-hint">Saved for later, and used as a light signal for future recommendations that match your filters.</p>
+
+          <div class="rec-autocomplete rec-title-search">
+            <input class="rec-input" type="text" id="watchlist-search-input" placeholder="Search a title to add straight to your watchlist…" autocomplete="off" />
+            <div id="watchlist-search-results" class="rec-suggestions rec-hidden"></div>
+          </div>
+
           <div id="pref-watchlist"></div>
         </div>
 

@@ -199,6 +199,67 @@
     });
   }
 
+  // --- Watchlist quick-add search (Preferences tab) ---
+  // Lets someone open the app purely to note "I want to watch this later"
+  // without going through the full genre/tag/NL recommendation flow.
+  let watchlistSearchDebounce = null;
+  function setupWatchlistSearch() {
+    const input = document.getElementById("watchlist-search-input");
+    const resultsEl = document.getElementById("watchlist-search-results");
+    if (!input || !resultsEl) return;
+
+    input.addEventListener("input", () => {
+      clearTimeout(watchlistSearchDebounce);
+      const q = input.value.trim();
+      if (!q) {
+        resultsEl.classList.add("rec-hidden");
+        return;
+      }
+      watchlistSearchDebounce = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/search-titles?q=${encodeURIComponent(q)}`);
+          const data = await res.json();
+          renderWatchlistSearchResults(data.results || []);
+        } catch (e) {
+          resultsEl.classList.add("rec-hidden");
+        }
+      }, 200);
+    });
+
+    function renderWatchlistSearchResults(results) {
+      resultsEl.innerHTML = "";
+      if (!results.length) {
+        resultsEl.classList.add("rec-hidden");
+        return;
+      }
+      results.forEach((item) => {
+        const alreadyOn = state.watchlist.some((w) => w.titleId === item.id);
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "rec-title-result";
+        row.disabled = alreadyOn;
+        row.innerHTML = `
+          ${item.posterUrl ? `<img src="${item.posterUrl}" alt="" />` : "<img />"}
+          <div class="rec-title-result-info">
+            <p class="rec-title-result-name">${escapeHtml(item.title)}</p>
+            <p class="rec-title-result-meta">${item.mediaType === "tv" ? "📺" : "🎬"} ${item.year || ""}</p>
+          </div>
+          <span class="rec-title-result-action">${alreadyOn ? "✓ Added" : "+ Add"}</span>
+        `;
+        if (!alreadyOn) {
+          row.addEventListener("click", () => {
+            addToWatchlist(item);
+            input.value = "";
+            resultsEl.classList.add("rec-hidden");
+            renderPreferencesTab();
+          });
+        }
+        resultsEl.appendChild(row);
+      });
+      resultsEl.classList.remove("rec-hidden");
+    }
+  }
+
   function namesByState(stateMap, want) {
     return Object.entries(stateMap)
       .filter(([, v]) => v === want)
@@ -767,6 +828,7 @@
       document.getElementById(id).addEventListener("input", updateSelectionSummary);
     });
     setupMadeByAutocomplete();
+    setupWatchlistSearch();
     setupResetButton();
   }
 

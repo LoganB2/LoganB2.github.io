@@ -27,6 +27,7 @@ const MIME = {
 const apiHandlers = {
   '/api/recommend': (await import('../api/recommend.js')).default,
   '/api/people': (await import('../api/people.js')).default,
+  '/api/search-titles': (await import('../api/search-titles.js')).default,
 };
 
 function readBody(req) {
