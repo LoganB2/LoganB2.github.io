@@ -14,7 +14,8 @@
       <a class="nav-brand" href="index.html">Logan Barger</a>
       <div class="nav-right">
         <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#work-projects" data-tab-link="work-projects">Work Projects</a></li>
+        <li><a href="index.html#personal-projects" data-tab-link="personal-projects">Personal Projects</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
@@ -40,8 +41,14 @@
     </section>
 
     <section class="container" id="projects">
+      <div class="project-tabs">
+        <button class="project-tab-btn selected" data-project-tab="work-projects" type="button">Work Projects</button>
+        <button class="project-tab-btn" data-project-tab="personal-projects" type="button">Personal Projects</button>
+      </div>
+
+      <div id="work-projects" class="project-tab-panel">
       <div class="section-title">
-        <h2>Selected Projects</h2>
+        <h2>Work Projects</h2>
         <span class="count">6 case studies</span>
       </div>
 
@@ -149,6 +156,35 @@
           </div>
         </article>
 
+      </div>
+      </div>
+
+      <div id="personal-projects" class="project-tab-panel hidden">
+        <div class="section-title">
+          <h2>Personal Projects</h2>
+          <span class="count">1 project</span>
+        </div>
+
+        <div class="project-grid">
+
+          <article class="card">
+            <div class="card-top">
+              <span class="card-status status-live">Live</span>
+            </div>
+            <h3><a href="projects/recommender.html">Watchprint</a></h3>
+            <p class="desc">A movie &amp; TV recommendation engine that explains its picks in plain language — and remembers your taste over time.</p>
+            <div class="tags">
+              <span class="tag">Embeddings</span>
+              <span class="tag">Claude API</span>
+              <span class="tag">Node.js</span>
+            </div>
+            <div class="card-footer">
+              <a href="projects/recommender.html">Try it →</a>
+              <span class="metric">~8,000 titles</span>
+            </div>
+          </article>
+
+        </div>
       </div>
     </section>
   </main>

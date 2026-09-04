@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4173"],
       "port": 4173
+    },
+    {
+      "name": "recommender-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/dev-server.js"],
+      "port": 3000
     }
   ]
 }

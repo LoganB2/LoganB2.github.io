@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie &amp; TV Recommendation Engine — Logan Barger</title>
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/recommender.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="nav-brand" href="../index.html">Logan Barger</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="../index.html#work-projects">Work Projects</a></li>
+          <li><a href="../index.html#personal-projects">Personal Projects</a></li>
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../contact.html">Contact</a></li>
+        </ul>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero container">
+      <p class="breadcrumb"><a href="../index.html">Home</a> / Recommendation Engine</p>
+      <h1>Movie &amp; TV Recommendation Engine</h1>
+      <p class="subtitle">
+        Semantic search over ~8,000 titles, tuned by tags, filters, and live feedback —
+        with a plain-language explanation for your top picks.
+      </p>
+    </section>
+
+    <div class="container rec-app">
+      <div class="rec-tabs">
+        <button class="rec-tab-btn selected" data-tab="find" type="button">Find a Recommendation</button>
+        <button class="rec-tab-btn" data-tab="preferences" type="button">My Preferences</button>
+      </div>
+
+      <div id="tab-find">
+      <!-- Step 1: media type -->
+      <div class="rec-step" id="step-media">
+        <div class="rec-media-toggle">
+          <button class="rec-media-btn" data-media="movie" type="button">🎬 Movie</button>
+          <button class="rec-media-btn" data-media="tv" type="button">📺 TV Show</button>
+        </div>
+      </div>
+
+      <!-- Step 2: everything else, hidden until a media type is picked -->
+      <div id="step-details" class="rec-hidden">
+
+        <div class="rec-panel">
+          <h3>Genres</h3>
+          <p class="rec-hint">Tap once to want it, twice to exclude it entirely, a third time to clear.</p>
+          <div class="rec-chips" id="genre-chips"></div>
+        </div>
+
+        <div class="rec-panel">
+          <h3>Mood &amp; style</h3>
+          <p class="rec-hint">Tap to want, tap again to avoid, a third time to clear.</p>
+          <div id="soft-tag-groups"></div>
+        </div>
+
+        <div class="rec-panel">
+          <h3>Describe what you're in the mood for</h3>
+          <p class="rec-hint">Genres, feelings, plot ideas — whatever comes to mind.</p>
+          <textarea id="nl-text" class="rec-textarea" placeholder="e.g. I want a movie that will make me think, with a twist at the end, sci-fi or futuristic"></textarea>
+        </div>
+
+        <div class="rec-panel">
+          <h3>Filters</h3>
+          <div class="rec-filter-grid">
+            <div class="rec-field">
+              <label>Release year</label>
+              <div class="rec-range">
+                <input class="rec-input" type="number" id="year-min" placeholder="From" />
+                <span>–</span>
+                <input class="rec-input" type="number" id="year-max" placeholder="To" />
+              </div>
+            </div>
+            <div class="rec-field">
+              <label id="runtime-label">Runtime (minutes)</label>
+              <div class="rec-range">
+                <input class="rec-input" type="number" id="runtime-min" placeholder="Min" />
+                <span>–</span>
+                <input class="rec-input" type="number" id="runtime-max" placeholder="Max" />
+              </div>
+            </div>
+            <div class="rec-field rec-autocomplete">
+              <label>Made by (director / producer / creator)</label>
+              <input class="rec-input" type="text" id="madeby-input" placeholder="Start typing a name…" autocomplete="off" />
+              <div id="madeby-suggestions" class="rec-suggestions rec-hidden"></div>
+              <div id="madeby-selected"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rec-panel" id="selection-summary-panel">
+          <h3>Active selections</h3>
+          <p class="rec-hint">Check this before searching — anything listed here is included, even from an earlier search.</p>
+          <p id="selection-summary" class="rec-selection-summary">Nothing selected yet.</p>
+          <button id="clear-all-btn" type="button" class="rec-btn-small">Clear all selections</button>
+        </div>
+
+        <div class="rec-submit-row">
+          <button id="submit-btn" class="btn btn-primary" type="button">Find a recommendation</button>
+        </div>
+
+        <div id="results-area" class="rec-results"></div>
+
+        <div class="rec-reset-row rec-hidden" id="reset-row">
+          <button id="reset-btn" type="button">Reset my remembered preferences on this browser</button>
+        </div>
+      </div>
+      </div>
+
+      <div id="tab-preferences" class="rec-hidden">
+        <div class="rec-privacy-note">
+          <strong>This is anonymous.</strong> Everything below is tracked only by browser + device — no account, no name, no email, nothing sent to a server or tied to who you are. It's stored entirely in this browser's local storage.
+          <p class="rec-privacy-list-label">This saved data can be lost if you:</p>
+          <ul>
+            <li>Clear your browser's cookies / site data / "clear browsing data"</li>
+            <li>Were using a private or incognito window and closed it</li>
+            <li>Switch to a different browser or a different device</li>
+            <li>Reset, reinstall, or sign into a fresh profile in your browser</li>
+            <li>Click "Reset my remembered preferences" yourself</li>
+          </ul>
+        </div>
+
+        <div class="rec-panel">
+          <h3>Watchlist</h3>
+          <p class="rec-hint">Saved for later, and used as a light signal for future recommendations that match your filters.</p>
+          <div id="pref-watchlist"></div>
+        </div>
+
+        <div class="rec-panel">
+          <h3>Seen &amp; Rated</h3>
+          <p class="rec-hint">Everything you've marked as already seen, with the rating you gave it.</p>
+          <div id="pref-ratings"></div>
+        </div>
+
+        <div class="rec-panel">
+          <h3>About You</h3>
+          <p class="rec-hint">What your searches, watchlist, and ratings say about your taste — movies and TV shown separately.</p>
+          <div id="pref-about-you"></div>
+        </div>
+
+        <div class="rec-panel">
+          <h3>Your Search History</h3>
+          <p class="rec-hint">A timeline of what you've searched for — a record of how your taste has shifted over time.</p>
+          <div id="pref-history"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Logan Barger</span>
+      <span><a href="../contact.html">logan.p.barger@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/recommender.js"></script>
+</body>
+</html>

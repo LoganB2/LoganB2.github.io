@@ -272,6 +272,33 @@ main { flex: 1; }
   color: var(--text-faint);
 }
 
+.hidden { display: none !important; }
+
+/* Project tabs (Work / Personal) */
+.project-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-tab-btn {
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.project-tab-btn:hover { color: var(--text); }
+.project-tab-btn.selected {
+  color: var(--accent-ink);
+  border-bottom-color: var(--accent);
+}
+
 /* Project grid */
 .project-grid {
   display: grid;

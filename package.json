@@ -1,0 +1,14 @@
+{
+  "name": "personal-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pull-tmdb": "node scripts/pull-tmdb-data.js",
+    "embed-titles": "node scripts/embed-titles.js"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "dotenv": "^16.4.5"
+  }
+}
