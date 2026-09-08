@@ -1,0 +1,655 @@
+<!doctype html>
+<title>How Watchprint Works</title>
+<meta name="description" content="An interactive walkthrough of Watchprint's recommendation pipeline — what you do on screen, paired with the mechanism running behind it." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    /* Light — the site's own Editorial Earth tokens, not a separate palette. */
+    --bg: #f7f1e3;
+    --panel: rgba(255,252,244,.92);
+    --border: #e6dcc2;
+    --text: #241c12;
+    --text-dim: #6b5d47;
+
+    /* "On stage" — the site's terracotta accent */
+    --orange: #a8471f;
+    --orange-glow: rgba(168,71,31,.24);
+    --orange-dim: #d9a688;
+
+    /* "In the booth" — a deep sage/moss, the cool half of the same
+       warm/cool pair colorists lean on, pulled from the site's own
+       forest-green family instead of an invented hue. */
+    --teal: #4a5c3a;
+    --teal-glow: rgba(74,92,58,.18);
+    --teal-dim: #b9c2a4;
+
+    --surface-1: #fffcf4;
+    --surface-1-active: #f3ded2;
+    --surface-1-hover-border: #d9a688;
+    --sprocket: #d9cba0;
+    --you-bg: rgba(255,255,255,.75);
+    --code-bg: rgba(36,28,18,.07);
+    --sep: #c9bc9c;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #181c16;
+      --panel: rgba(33,40,32,.88);
+      --border: #34402f;
+      --text: #f0ecdd;
+      --text-dim: #a9b09b;
+
+      --orange: #e37f4a;
+      --orange-glow: rgba(227,127,74,.4);
+      --orange-dim: #6b4530;
+
+      --teal: #9caf7c;
+      --teal-glow: rgba(156,175,124,.38);
+      --teal-dim: #46583e;
+
+      --surface-1: #1c221a;
+      --surface-1-active: #232b1f;
+      --surface-1-hover-border: #4a5a40;
+      --sprocket: #3a4534;
+      --you-bg: rgba(0,0,0,.55);
+      --code-bg: rgba(255,255,255,.08);
+      --sep: #444;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #181c16;
+    --panel: rgba(33,40,32,.88);
+    --border: #34402f;
+    --text: #f0ecdd;
+    --text-dim: #a9b09b;
+
+    --orange: #e37f4a;
+    --orange-glow: rgba(227,127,74,.4);
+    --orange-dim: #6b4530;
+
+    --teal: #9caf7c;
+    --teal-glow: rgba(156,175,124,.38);
+    --teal-dim: #46583e;
+
+    --surface-1: #1c221a;
+    --surface-1-active: #232b1f;
+    --surface-1-hover-border: #4a5a40;
+    --sprocket: #3a4534;
+    --you-bg: rgba(0,0,0,.55);
+    --code-bg: rgba(255,255,255,.08);
+    --sep: #444;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  button { font-family: inherit; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  .app { height: 100vh; display: flex; flex-direction: column; position: relative; }
+
+  /* film-grain texture, subtle */
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; opacity: .05; z-index: 50; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Header ---------- */
+  .marquee {
+    flex-shrink: 0; padding: 22px 32px 4px; position: relative; z-index: 2;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  }
+  .marquee-eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--text-dim); margin: 0 0 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .marquee-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 8px var(--orange-glow); }
+  h1 {
+    font-family: "Big Shoulders Display", sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 5.2vw, 3.6rem);
+    line-height: .92;
+    letter-spacing: -.01em;
+    text-transform: uppercase;
+    margin: 0;
+    background: linear-gradient(100deg, var(--orange) 0%, var(--text) 55%, var(--text) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .header-actions { flex-shrink: 0; display: flex; align-items: center; gap: 14px; margin-top: 2px; }
+  .back-link {
+    font-family: "IBM Plex Mono", monospace; font-size: .78rem;
+    color: var(--text-dim); text-decoration: none;
+  }
+  .back-link:hover { color: var(--orange); }
+  .theme-toggle {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface-1);
+    color: var(--text); font-size: .95rem; cursor: pointer; padding: 0;
+  }
+  .theme-toggle:hover { border-color: var(--orange); }
+
+  /* ---------- Stage ---------- */
+  .stage { flex: 1; position: relative; min-height: 0; }
+  canvas#field { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .center-label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none; z-index: 3;
+  }
+  .center-label .you {
+    font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .12em;
+    color: var(--text); background: var(--you-bg); border: 1px solid var(--border);
+    padding: 5px 11px; border-radius: 100px;
+  }
+
+  .beam {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: min(320px, 38vw);
+    background: var(--panel);
+    backdrop-filter: blur(6px);
+    border-radius: 14px;
+    padding: 20px 22px;
+    z-index: 4;
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .beam.visible { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+  .beam.house { left: 28px; border: 1px solid var(--orange-dim); box-shadow: 0 0 0 1px var(--orange-glow), 0 20px 50px var(--orange-glow); }
+  .beam.booth { right: 28px; border: 1px solid var(--teal-dim); box-shadow: 0 0 0 1px var(--teal-glow), 0 20px 50px var(--teal-glow); }
+  .beam-label {
+    font-family: "IBM Plex Mono", monospace; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+    margin: 0 0 10px; display: flex; align-items: center; gap: 7px;
+  }
+  .beam.house .beam-label { color: var(--orange); }
+  .beam.booth .beam-label { color: var(--teal); }
+  .beam p { margin: 0; font-size: .92rem; line-height: 1.55; color: var(--text); }
+  .beam p + p { margin-top: 9px; }
+  .beam strong { color: var(--text); }
+  .beam code { color: var(--text); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+
+  .step-title {
+    position: absolute; left: 50%; top: 20px; transform: translateX(-50%);
+    text-align: center; z-index: 4; pointer-events: none;
+  }
+  .step-title .step-eyebrow { font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .12em; color: var(--text-dim); text-transform: uppercase; margin: 0 0 4px; }
+  .step-title h2 {
+    font-family: "Big Shoulders Display", sans-serif; font-weight: 800; text-transform: uppercase;
+    font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -.005em; margin: 0; color: var(--text);
+  }
+
+  .overview-copy {
+    position: absolute; left: 50%; bottom: 5.5%; transform: translateX(-50%);
+    max-width: 62ch; text-align: center; z-index: 4; pointer-events: none;
+  }
+  .overview-copy p { font-size: .96rem; line-height: 1.58; color: var(--text-dim); margin: 0; }
+  .overview-copy p + p { margin-top: 10px; }
+  .overview-copy strong { color: var(--text); font-weight: 600; }
+  .overview-copy .spec-strip {
+    margin-top: 16px; font-family: "IBM Plex Mono", monospace; font-size: .72rem;
+    color: var(--text-dim); letter-spacing: .01em;
+  }
+  .overview-copy .spec-strip span { color: var(--text); }
+  .overview-copy .spec-strip .sep { color: var(--sep); margin: 0 8px; }
+  .overview-copy .grading-note {
+    margin-top: 10px; font-family: "IBM Plex Mono", monospace; font-size: .7rem; color: var(--text-dim);
+  }
+  .overview-copy .grading-note .o { color: var(--orange); }
+  .overview-copy .grading-note .t { color: var(--teal); }
+
+  /* ---------- Filmstrip ---------- */
+  .filmstrip-wrap { flex-shrink: 0; position: relative; z-index: 5; background: linear-gradient(to top, var(--bg) 0%, transparent 100%); padding-top: 16px; }
+  .filmstrip {
+    display: flex; align-items: stretch; gap: 3px;
+    padding: 0 14px 14px;
+    overflow-x: auto;
+  }
+  .sprockets { display: flex; justify-content: space-evenly; padding: 0 14px; }
+  .sprockets span { width: 7px; height: 7px; border-radius: 1px; background: var(--sprocket); margin-top: 2px; }
+
+  .film-cell {
+    flex: 1; min-width: 92px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 8px 8px;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 5px;
+    color: var(--text-dim);
+    position: relative;
+    transition: border-color .2s, background .2s;
+  }
+  .film-cell:hover { border-color: var(--surface-1-hover-border); }
+  .film-cell.active { background: var(--surface-1-active); border-color: var(--orange); }
+  .film-cell .fc-num {
+    font-family: "IBM Plex Mono", monospace; font-size: .72rem; color: var(--text-dim);
+  }
+  .film-cell.active .fc-num { color: var(--orange); }
+  .film-cell .fc-label { font-size: .72rem; line-height: 1.25; color: var(--text-dim); }
+  .film-cell.active .fc-label { color: var(--text); }
+
+  .clicker-arrow {
+    flex-shrink: 0; align-self: center;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;
+  }
+  .clicker-arrow:hover:not(:disabled) { border-color: var(--orange); color: var(--orange); }
+  .clicker-arrow:disabled { opacity: .3; cursor: default; }
+
+  @media (max-width: 780px) {
+    .beam { position: static; width: auto; transform: none; margin: 8px 14px; opacity: 1; pointer-events: auto; display: none; }
+    .beam.visible { display: block; }
+    .stage { display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 8px; }
+    canvas#field { position: absolute; inset: 0; opacity: .6; }
+    .overview-copy { position: static; transform: none; margin: 0 16px 10px; max-width: none; }
+    .step-title { position: static; transform: none; margin: 8px 16px 0; }
+    .center-label { display: none; }
+    .film-cell .fc-label { display: none; }
+    .film-cell { min-width: 40px; flex: 0 0 auto; }
+  }
+</style>
+
+<div class="app">
+  <div class="grain"></div>
+
+  <header class="marquee">
+    <div>
+      <p class="marquee-eyebrow"><span class="dot"></span> Watchprint — Now Showing</p>
+      <h1>How it works</h1>
+    </div>
+    <div class="header-actions">
+      <a class="back-link" href="../index.html#personal-projects">← Back</a>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <canvas id="field"></canvas>
+    <div class="center-label" id="centerLabel"><span class="you">YOU</span></div>
+
+    <div class="step-title" id="stepTitle" hidden>
+      <p class="step-eyebrow" id="stepEyebrow"></p>
+      <h2 id="stepHeading"></h2>
+    </div>
+
+    <div class="overview-copy" id="overviewCopy">
+      <p>Every title here lives at a point in a <strong>384-dimensional space</strong>,
+      placed there by a small model reading its plot summary and keywords — not by
+      picking from TMDB's own genre tags. Type what you're after, and your sentence
+      lands in that same space; <strong>cosine similarity</strong>, the angle between
+      your point and every title's, decides what's close.</p>
+      <p>Genre exclusions, year, runtime, and director don't get a vote in that math —
+      they're <strong>hard filters</strong>, pass or fail, applied first. Everything
+      fuzzier is what the vectors actually rank. Rate something and its vector folds
+      back in too, averaged in at a capped weight, so it nudges the next search
+      instead of overriding what you typed.</p>
+      <p class="spec-strip">
+        <span>all-MiniLM-L6-v2</span><span class="sep">·</span><span>cosine similarity</span><span class="sep">·</span><span>Claude Haiku for the one line of prose</span><span class="sep">·</span><span>Vercel serverless, no GPU</span>
+      </p>
+      <p class="grading-note">
+        <span class="o">■ rust</span> — on stage, what you do &nbsp;·&nbsp;
+        <span class="t">■ sage</span> — in the booth, what runs behind it
+        &nbsp;·&nbsp; the same warm/cool split colorists lean on, in the site's own colors
+      </p>
+    </div>
+
+    <aside class="beam house" id="beamHouse">
+      <p class="beam-label">On stage</p>
+      <div id="beamHouseBody"></div>
+    </aside>
+    <aside class="beam booth" id="beamBooth">
+      <p class="beam-label">In the booth</p>
+      <div id="beamBoothBody"></div>
+    </aside>
+  </div>
+
+  <div class="filmstrip-wrap">
+    <div class="sprockets">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="filmstrip" id="filmstrip">
+      <button class="clicker-arrow" id="prevBtn" aria-label="Previous">‹</button>
+      <div class="film-cell" data-frame="0"><span class="fc-num">●</span><span class="fc-label">Overview</span></div>
+      <div class="film-cell" data-frame="1"><span class="fc-num">01</span><span class="fc-label">Pick Movie / TV</span></div>
+      <div class="film-cell" data-frame="2"><span class="fc-num">02</span><span class="fc-label">Tune what you want</span></div>
+      <div class="film-cell" data-frame="3"><span class="fc-num">03</span><span class="fc-label">Submit</span></div>
+      <div class="film-cell" data-frame="4"><span class="fc-num">04</span><span class="fc-label">Read the picks</span></div>
+      <div class="film-cell" data-frame="5"><span class="fc-num">05</span><span class="fc-label">Rate or save</span></div>
+      <div class="film-cell" data-frame="6"><span class="fc-num">06</span><span class="fc-label">Ask again</span></div>
+      <div class="film-cell" data-frame="7"><span class="fc-num">07</span><span class="fc-label">Come back later</span></div>
+      <button class="clicker-arrow" id="nextBtn" aria-label="Next">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- theme toggle ----------
+  function currentTheme() {
+    var attr = document.documentElement.getAttribute('data-theme');
+    if (attr === 'light' || attr === 'dark') return attr;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function isDark() { return currentTheme() === 'dark'; }
+  function setToggleIcon(btn) {
+    if (!btn) return;
+    var dark = isDark();
+    btn.textContent = dark ? '☀️' : '🌙';
+    btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  const themeBtn = document.getElementById('themeToggle');
+  setToggleIcon(themeBtn);
+  themeBtn.addEventListener('click', () => {
+    const next = isDark() ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    setToggleIcon(themeBtn);
+  });
+
+  // ---------- content per step ----------
+  const STEPS = [
+    null, // 0 = overview, handled separately
+    { eyebrow: 'Step 1 of 7', title: 'Pick Movie or TV',
+      house: '<p>Tap 🎬 Movie or 📺 TV Show.</p>',
+      booth: '<p>Sets <code>mediaType</code> and swaps the genre list — TMDB’s own taxonomy differs between the two (TV has <code>"Sci-Fi &amp; Fantasy"</code> where movies split it into <code>Science Fiction</code> and <code>Fantasy</code>).</p>' },
+    { eyebrow: 'Step 2 of 7', title: 'Tune what you want',
+      house: '<p>Tap genre chips (want / avoid), mood &amp; style tags, type a free-text description, set year / runtime / director.</p>',
+      booth: '<p>Genre-avoid, year, runtime, and director become <strong>hard filters</strong> — in or out, no partial credit.</p><p>Everything else — tags plus your text — gets embedded by a local model into a <code>384-dim</code> "want vector." No API call, runs on the server itself.</p>' },
+    { eyebrow: 'Step 3 of 7', title: 'Submit',
+      house: '<p>Click "Find a recommendation."</p>',
+      booth: '<p>~8,000 titles narrow to the ones passing every hard filter. Each survivor is scored by <strong>cosine similarity</strong> between its own pre-computed vector and your want vector, plus a small genre boost and a nudge from TMDB’s own rating.</p>' },
+    { eyebrow: 'Step 4 of 7', title: 'Read the picks',
+      house: '<p>Top 5 appear with a plain-language "why." 15 more sit behind "See more," ranked but unexplained.</p>',
+      booth: '<p>Each explanation is a template — matched genres/tags, filled in for free — plus one clause written by <strong>Claude</strong>, grounded only in the plot summary, told never to spoil the ending.</p><p>Only the top 5 get that call. Fast and cheap; the rest stay genuinely ranked either way.</p>' },
+    { eyebrow: 'Step 5 of 7', title: 'Rate it, or save it',
+      house: '<p>"Already seen it" → Hated / Disliked / Liked / Loved. Or "+ Add to watchlist."</p>',
+      booth: '<p>Loved + liked, plus the whole watchlist, average into one <strong>positive vector</strong>. Hated + disliked average into one <strong>negative vector</strong> — one vote each, not stacked, so ten quiet likes can’t drown out one loud favorite.</p>' },
+    { eyebrow: 'Step 6 of 7', title: 'Ask again',
+      house: '<p>Change a filter, search again — same visit or a week later.</p>',
+      booth: '<p>Those two vectors blend into the next want/avoid vectors at a fixed, modest weight — real influence, capped so it can never outweigh what you just typed.</p>' },
+    { eyebrow: 'Step 7 of 7', title: 'Come back later',
+      house: '<p>Open "My Preferences" — watchlist, ratings, search history, a taste summary, split by movies and TV.</p>',
+      booth: '<p>All of it lives in <code>localStorage</code>, this browser only. No account, no server record — gone if you clear site data or open a different browser.</p>' },
+  ];
+
+  // ---------- DOM ----------
+  const cells = [...document.querySelectorAll('.film-cell')];
+  const overviewCopy = document.getElementById('overviewCopy');
+  const stepTitle = document.getElementById('stepTitle');
+  const centerLabel = document.getElementById('centerLabel');
+  const stepEyebrow = document.getElementById('stepEyebrow');
+  const stepHeading = document.getElementById('stepHeading');
+  const beamHouse = document.getElementById('beamHouse');
+  const beamBooth = document.getElementById('beamBooth');
+  const beamHouseBody = document.getElementById('beamHouseBody');
+  const beamBoothBody = document.getElementById('beamBoothBody');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  let current = 0;
+  const max = STEPS.length - 1;
+
+  function show(n) {
+    current = Math.max(0, Math.min(max, n));
+    cells.forEach(c => c.classList.toggle('active', Number(c.dataset.frame) === current));
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === max;
+
+    if (current === 0) {
+      overviewCopy.style.display = '';
+      stepTitle.hidden = true;
+      beamHouse.classList.remove('visible');
+      beamBooth.classList.remove('visible');
+    } else {
+      overviewCopy.style.display = 'none';
+      stepTitle.hidden = false;
+      const s = STEPS[current];
+      stepEyebrow.textContent = s.eyebrow;
+      stepHeading.textContent = s.title;
+      beamHouseBody.innerHTML = s.house;
+      beamBoothBody.innerHTML = s.booth;
+      beamHouse.classList.add('visible');
+      beamBooth.classList.add('visible');
+    }
+    centerLabel.style.display = current === 0 ? 'none' : '';
+    setFieldStep(current);
+  }
+
+  cells.forEach(c => c.addEventListener('click', () => show(Number(c.dataset.frame))));
+  prevBtn.addEventListener('click', () => show(current - 1));
+  nextBtn.addEventListener('click', () => show(current + 1));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') show(current + 1);
+    if (e.key === 'ArrowLeft') show(current - 1);
+  });
+
+  // ---------- particle field ----------
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const N = 170;
+  const points = [];
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  for (let i = 0; i < N; i++) {
+    points.push({
+      x: Math.random(), y: Math.random(),
+      tx: Math.random(), ty: Math.random(),
+      vx: 0, vy: 0,
+      r: rand(1.4, 3.2), tr: rand(1.4, 3.2),
+      a: rand(.25, .6), ta: rand(.25, .6),
+      hue: Math.random() < 0.5 ? 'orange' : 'teal',
+      thue: null,
+      affinity: Math.random(),
+      phase: rand(0, Math.PI * 2),
+      speed: rand(.15, .4),
+    });
+  }
+
+  // Each step gets its own physics, not just a repositioned target — the
+  // motion itself should read as "what's happening," not just where things
+  // end up. Stiffness (k) is how hard points get pulled toward their target;
+  // damping (d) is how much velocity survives each frame — low damping +
+  // high stiffness overshoots and settles (a snap), high damping + low
+  // stiffness arrives slowly with no overshoot (a drift).
+  const STEP_PHYSICS = {
+    0: { k: .010, d: .90 }, // idle scatter — unhurried
+    1: { k: .022, d: .84 }, // splitting into two clusters
+    2: { k: .009, d: .92 }, // streaming toward the "want" direction — gradual pull
+    3: { k: .040, d: .72 }, // the cut — fast, decisive
+    4: { k: .055, d: .60 }, // snapping into ranked formation — visible overshoot
+    5: { k: .06,  d: .58 }, // a rating landing — quick, slightly springy
+    6: { k: .0035, d: .95 }, // the nudge — slow, sustained, unmistakably gentle
+    7: { k: .020, d: .86 }, // settling into storage
+  };
+  points.sort((a, b) => b.affinity - a.affinity);
+  const TOP5 = points.slice(0, 5);
+
+  // RGB triples matching the CSS tokens above, for canvas fillStyle use —
+  // canvas can't read custom properties directly, so these are kept in sync
+  // by hand with --orange/--teal/--text in both themes.
+  const RGB = {
+    dark: { orange: '227,127,74', teal: '156,175,124', text: '240,236,221' },
+    light: { orange: '168,71,31', teal: '74,92,58', text: '36,28,18' },
+  };
+  function rgbSet() { return isDark() ? RGB.dark : RGB.light; }
+
+  function colorFor(p, alpha) {
+    const c = rgbSet();
+    if (p.hue === 'orange') return `rgba(${c.orange},${alpha})`;
+    if (p.hue === 'teal') return `rgba(${c.teal},${alpha})`;
+    return `rgba(${c.text},${alpha})`;
+  }
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function setFieldStep(step) {
+    const cx = 0.5, cy = 0.5;
+    points.forEach((p, i) => {
+      switch (step) {
+        case 0: // overview: full scatter, gentle mixed colors
+          p.tx = rand(.06, .94); p.ty = rand(.12, .88);
+          p.ta = rand(.25, .55); p.tr = rand(1.4, 3);
+          p.thue = p.hue;
+          break;
+        case 1: // movie vs tv split
+          if (p.hue === 'orange') { p.tx = rand(.08, .42); p.ty = rand(.15, .85); }
+          else { p.tx = rand(.58, .92); p.ty = rand(.15, .85); }
+          p.ta = .5; p.tr = 2; p.thue = p.hue;
+          break;
+        case 2: // gradient toward "want" direction, by affinity
+          p.tx = 0.15 + p.affinity * 0.7 + rand(-.05, .05);
+          p.ty = rand(.15, .85);
+          p.ta = .18 + p.affinity * .55;
+          p.tr = 1.4 + p.affinity * 1.8;
+          p.thue = p.affinity > 0.5 ? 'orange' : 'text';
+          break;
+        case 3: // filtering: most fade out, survivors (high affinity) brighten
+          if (p.affinity > 0.62) {
+            p.tx = 0.3 + rand(-.18, .18) + (p.affinity - 0.62) * 1.6;
+            p.ty = cy + rand(-.3, .3);
+            p.ta = .75; p.tr = 2.6; p.thue = 'orange';
+          } else {
+            p.tx = rand(.05, .95); p.ty = rand(.05, .95);
+            p.ta = .06; p.tr = 1.1; p.thue = 'text';
+          }
+          break;
+        case 4: { // ranked: top 5 arc toward center, rest dim background
+          const idx = TOP5.indexOf(p);
+          if (idx !== -1) {
+            const angle = (idx / 4 - 0.5) * 1.1;
+            p.tx = cx + Math.sin(angle) * 0.30;
+            p.ty = cy + Math.cos(angle) * 0.22 - 0.02;
+            p.ta = .95; p.tr = 4.4; p.thue = 'orange';
+          } else {
+            p.tx = rand(.04, .96); p.ty = rand(.04, .96);
+            p.ta = .07; p.tr = 1; p.thue = 'text';
+          }
+          break;
+        }
+        case 5: { // rating: one top point pulses via teal/orange swap, arrow toward center
+          const idx = TOP5.indexOf(p);
+          if (idx === 0) { p.tx = cx + 0.32; p.ty = cy - 0.24; p.ta = 1; p.tr = 5; p.thue = 'teal'; }
+          else if (idx !== -1) { p.tx = cx + Math.sin((idx / 4 - 0.5) * 1.1) * 0.30; p.ty = cy + Math.cos((idx / 4 - 0.5) * 1.1) * 0.22 - .02; p.ta = .5; p.tr = 3; p.thue = 'orange'; }
+          else { p.tx = rand(.04, .96); p.ty = rand(.04, .96); p.ta = .06; p.tr = 1; p.thue = 'text'; }
+          break;
+        }
+        case 6: // whole cluster visibly shifts (nudge)
+          p.tx = Math.min(0.95, Math.max(0.05, p.x + 0.18));
+          p.ty = Math.min(0.95, Math.max(0.05, p.y - 0.06));
+          p.ta = p.hue === 'orange' ? .55 : .3;
+          p.tr = 2; p.thue = p.hue;
+          break;
+        case 7: // storage: cluster contracts small, bottom-left, rest fade almost fully
+          if (p.affinity > 0.8) {
+            p.tx = 0.12 + rand(-.03, .03); p.ty = 0.82 + rand(-.03, .03);
+            p.ta = .8; p.tr = 2.2; p.thue = 'teal';
+          } else {
+            p.tx = rand(.1, .9); p.ty = rand(.1, .7);
+            p.ta = .04; p.tr = 1; p.thue = 'text';
+          }
+          break;
+      }
+    });
+  }
+  setFieldStep(0);
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    const dark = isDark();
+
+    // connecting lines for the ranked step
+    if (current === 4 || current === 5) {
+      ctx.save();
+      TOP5.forEach((p) => {
+        ctx.beginPath();
+        ctx.moveTo(0.5 * W, 0.5 * H);
+        ctx.lineTo(p.x * W, p.y * H);
+        ctx.strokeStyle = `rgba(${rgbSet().orange},${0.12 * p.a})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    const phys = STEP_PHYSICS[current] || STEP_PHYSICS[0];
+    const propEase = reduced ? 1 : 0.045;
+
+    points.forEach((p) => {
+      if (reduced) {
+        p.x = p.tx; p.y = p.ty;
+      } else {
+        // spring toward the target — stiffness/damping vary by step, so the
+        // same repositioning logic *feels* like a cut, a snap, or a drift
+        // depending on what's actually happening at that step.
+        p.vx = (p.vx + (p.tx - p.x) * phys.k) * phys.d;
+        p.vy = (p.vy + (p.ty - p.y) * phys.k) * phys.d;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
+      p.a += (p.ta - p.a) * propEase;
+      p.r += (p.tr - p.r) * propEase;
+      if (p.thue) p.hue = p.thue;
+
+      const jitter = reduced ? 0 : Math.sin(t * 0.0006 * p.speed + p.phase) * 0.006;
+      const px = (p.x + jitter) * W;
+      const py = (p.y + Math.cos(t * 0.0005 * p.speed + p.phase) * 0.006) * H;
+
+      ctx.beginPath();
+      ctx.fillStyle = colorFor(p, p.a);
+
+      if (dark) {
+        // dark ground: a colored glow reads as light emitted by the dot
+        if (p.r > 3.2) { ctx.shadowColor = colorFor(p, 0.9); ctx.shadowBlur = 10; }
+        else { ctx.shadowBlur = 0; }
+        ctx.shadowOffsetY = 0;
+      } else {
+        // light ground: a glow just looks like a smudge — a soft neutral
+        // drop shadow gives the same "this one matters" emphasis as depth
+        // instead of light.
+        ctx.shadowColor = 'rgba(36,28,18,.22)';
+        ctx.shadowBlur = p.r > 3.2 ? 6 : 2.5;
+        ctx.shadowOffsetY = 1;
+      }
+
+      ctx.arc(px, py, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  show(0);
+})();
+</script>

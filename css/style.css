@@ -387,6 +387,13 @@ main { flex: 1; }
   border-top: 1px solid var(--border);
 }
 
+.card-footer .card-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .card-footer .metric {
   color: var(--text-faint);
   font-weight: 500;
